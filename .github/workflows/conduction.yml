@@ -23,4 +23,6 @@ jobs:
       - name: Build static site
         run: yarn install && npm run-script build
       - name: Deploy static site to S3 bucket
-        run: aws s3 sync ./build/ s3://${{ secrets.AWS_PRODUCTION_BUCKET_NAME }} --delete
+        run: aws s3 sync ./build/ s3://${{ secrets.AWS_PRODUCTION_BUCKET_NAME }} --delete --exclude *.map --exclude index.html --cache-control max-age=31536000 --acl public-read
+      - name: Deploy static index.html
+        run: aws s3 cp build/index.html s3://${{ secrets.AWS_PRODUCTION_BUCKET_NAME }}/index.html --metadata-directive REPLACE --cache-control no-cache,no-store --content-type text/html --acl public-read
